@@ -75,6 +75,7 @@ allocproc(void)
 {
   struct proc *p;
   char *sp;
+  int k;
 
   acquire(&ptable.lock);
 
@@ -101,6 +102,12 @@ found:
   // Leave room for trap frame.
   sp -= sizeof *p->tf;
   p->tf = (struct trapframe*)sp;
+
+  // Zero fill process shared pages and keys.
+  for(k = 0; k < MAXKEYS; k++) {
+    p->keys[k] = 0;
+    p->pshpgs[k] = 0;
+  }
 
   // Set up new context to start executing at forkret,
   // which returns to trapret.

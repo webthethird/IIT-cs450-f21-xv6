@@ -32,6 +32,13 @@ struct context {
   uint eip;
 };
 
+struct shpg {
+  int isused;
+  void *pgvas[MAXKEYPGS];
+  int refcount;
+  int numpgs;
+};
+
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 // Per-process state
@@ -49,6 +56,9 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  int shtop;                   // Next available page address from top
+  int keys[MAXKEYS];           // Shared page keys used by process
+  struct shpg *pshpgs[MAXKEYS];   // Shared page structs used
 };
 
 // Process memory is laid out contiguously, low addresses first:
