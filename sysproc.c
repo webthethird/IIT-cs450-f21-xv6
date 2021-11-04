@@ -89,3 +89,24 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// Returns a virtual address to the shared page when successful 
+// and the process can start writing and reading from the virtual address.
+// The first process that calls with a unique key will have the shared pages 
+// allocated to the next available virtual pages starting at the high end 
+// of the process’ address space. Subsequent calls with the same key from 
+// other processes will be able to read and write to the shared pages.
+int
+sys_getshpg(void)
+{
+
+}
+
+// Removes the calling process from accessing the shared pages  
+// associated with the key. When no more process can access the 
+// pages associated with a key, those pages will be deallocated.
+int
+sys_freeshpg(void)
+{
+
+}

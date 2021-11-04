@@ -23,6 +23,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+void* getshpg(int, int);
+int freeshpg(int);
 
 // ulib.c
 int stat(const char*, struct stat*);
