@@ -284,13 +284,13 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
 void
 freevm(pde_t *pgdir)
 {
-  uint i, j, k;
+  uint i, j, k, shared;
 
   if(pgdir == 0)
     panic("freevm: no pgdir");
   deallocuvm(pgdir, KERNBASE, 0);
   for(i = 0; i < NPDENTRIES; i++){
-    bool shared = false;
+    shared = 0;
     if(pgdir[i] & PTE_P){
       char * v = P2V(PTE_ADDR(pgdir[i]));
       for (j = 0; j < MAXKEYS; ++j)
@@ -299,7 +299,7 @@ freevm(pde_t *pgdir)
         {
           if ((char*)(shpgs[j]->pgvas[k]) == v)
           {
-            shared = true;
+            shared = 1;
             break;
           }
         }
@@ -447,14 +447,14 @@ initshpgs(void)
 {
   for (int i = 0; i < MAXKEYS; ++i)
   {
-    shpgs[i]->
+   
   }
 }
 
 int 
 getshpg(int key, int numPages)
 {
-
+  return 0;
 }
 
 // Look for key in the current process's key array.
@@ -477,11 +477,14 @@ freeshpg(int key)
   shpg->refcount--;
   curproc->keys[i] = 0;
   curproc->pshpgs[i] = 0;
-  if(shpg->refcount == 0) {
-    for(j = 0; j < MAXKEYPGS; j++) {
+  for(j = 0; j < shpg->numpgs; j++) {
+    curproc->shbot += PGSIZE;
+    if(shpg->refcount == 0) {
       kfree(shpg->pgvas[j]);
+
     }
   }
+  return 0;
 }
 
 //PAGEBREAK!

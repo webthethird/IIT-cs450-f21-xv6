@@ -11,13 +11,20 @@ int
 exec(char *path, char **argv)
 {
   char *s, *last;
-  int i, off;
+  int i, k, off;
   uint argc, sz, sp, ustack[3+MAXARG+1];
   struct elfhdr elf;
   struct inode *ip;
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
+
+  // Decrement the ref count for any shared pages used.
+  for(k = 0; k < MAXKEYS;k++) {
+    if(curproc->keys[k] != 0) {
+      freeshpg(curproc->keys[k]);
+    }
+  }
 
   begin_op();
 
