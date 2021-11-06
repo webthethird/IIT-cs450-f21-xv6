@@ -109,6 +109,10 @@ found:
     p->pshpgs[k] = 0;
   }
 
+  // Set the bottom of the shared page space, which grows
+  // downward from the top of the process address space.
+  p->shbot = KERNBASE;
+
   // Set up new context to start executing at forkret,
   // which returns to trapret.
   sp -= 4;

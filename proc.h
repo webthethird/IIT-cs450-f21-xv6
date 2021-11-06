@@ -58,7 +58,7 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  int shtop;                   // Next available page address from top
+  int shbot;                   // Next available page address from top
   int keys[MAXKEYS];           // Shared page keys used by process
   struct shpg *pshpgs[MAXKEYS];   // Shared page structs used
 };

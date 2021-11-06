@@ -19,7 +19,7 @@ fetchint(uint addr, int *ip)
 {
   struct proc *curproc = myproc();
 
-  if((addr >= curproc->sz && addr < curproc->shtop) || (addr+4 > curproc->sz && addr+4 <= curproc->shtop) ||
+  if((addr >= curproc->sz && addr < curproc->shbot) || (addr+4 > curproc->sz && addr+4 <= curproc->shbot) ||
     addr >= KERNBASE || addr+4 > KERNBASE)
     return -1;
   *ip = *(int*)(addr);
@@ -35,7 +35,7 @@ fetchstr(uint addr, char **pp)
   char *s, *ep;
   struct proc *curproc = myproc();
 
-  if((addr >= curproc->sz && addr < curproc->shtop) || addr >= KERNBASE)
+  if((addr >= curproc->sz && addr < curproc->shbot) || addr >= KERNBASE)
     return -1;
 
   *pp = (char*)addr;
