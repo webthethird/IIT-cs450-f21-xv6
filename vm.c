@@ -403,10 +403,31 @@ getshpg(int key, int numPages)
 
 }
 
+// Look for key in the current process's key array.
+// If found, 
 int
 freeshpg(int key)
 {
-
+  int i, j;
+  struct shpg* shpg = 0;
+  struct proc *curproc = myproc();
+  for(i = 0; i < MAXKEYS; i++) {
+    if(curproc->keys[i] == key) {
+      shpg = curproc->pshpgs[i];
+      break;
+    }
+  }
+  if(shpg == 0) {
+    return -1;
+  }
+  shpg->refcount--;
+  curproc->keys[i] = 0;
+  curproc->pshpgs[i] = 0;
+  if(shpg->refcount == 0) {
+    for(j = 0; j < MAXKEYPGS; j++) {
+      kfree(shpg->pgvas[j]);
+    }
+  }
 }
 
 //PAGEBREAK!

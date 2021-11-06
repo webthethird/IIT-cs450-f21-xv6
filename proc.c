@@ -211,6 +211,17 @@ fork(void)
   np->parent = curproc;
   *np->tf = *curproc->tf;
 
+  // Copy over any shared pages to the child process.
+  for(i = 0; i < MAXKEYS; i++) {
+    np->keys[i] = curproc->keys[i];
+    if(curproc->pshpgs[i] != 0) {
+      // If curproc is sharing a page, increment its refcount.
+      curproc->pshpgs[i]->refcount += 1;
+    }
+    np->pshpgs[i] = curproc->keys[i];
+  }
+  np->shbot = curproc->shbot;
+
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
