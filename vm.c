@@ -442,9 +442,11 @@ freeshpg(int key)
   shpg->refcount--;
   curproc->keys[i] = 0;
   curproc->pshpgs[i] = 0;
-  if(shpg->refcount == 0) {
-    for(j = 0; j < MAXKEYPGS; j++) {
+  for(j = 0; j < shpg->numpgs; j++) {
+    curproc->shbot += PGSIZE;
+    if(shpg->refcount == 0) {
       kfree(shpg->pgvas[j]);
+
     }
   }
   return 0;
