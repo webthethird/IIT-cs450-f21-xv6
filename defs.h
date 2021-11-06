@@ -187,7 +187,7 @@ void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
 void            initshpgs(void);
-int             getshpg(int, int);
+void*           getshpg(int, int);
 int             freeshpg(int);
 
 // number of elements in fixed-size array

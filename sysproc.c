@@ -96,7 +96,7 @@ sys_uptime(void)
 // allocated to the next available virtual pages starting at the high end 
 // of the process’ address space. Subsequent calls with the same key from 
 // other processes will be able to read and write to the shared pages.
-int
+void*
 sys_getshpg(void)
 {
   int key;
@@ -104,7 +104,7 @@ sys_getshpg(void)
 
   if (argint(0, &key) < 0 || argint(1, &numPages) < 0)
   {
-    return -1; //error in passed arguments
+    return (void*)-1; //error in passed arguments
   }
 
   //go to vm.c to do actual shared memory management
