@@ -218,7 +218,7 @@ fork(void)
       // If curproc is sharing a page, increment its refcount.
       curproc->pshpgs[i]->refcount += 1;
     }
-    np->pshpgs[i] = curproc->keys[i];
+    np->pshpgs[i] = curproc->pshpgs[i];
   }
   np->shbot = curproc->shbot;
 
