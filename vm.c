@@ -357,6 +357,41 @@ copyuvm(pde_t *pgdir, uint sz)
       goto bad;
     }
   }
+  //copy shared pages
+  struct proc *curproc = myproc();
+  int j, k;
+  for (i = curproc->shbot; i < KERNBASE; i += PGSIZE)
+  {
+    if ((pte = walkpgdir(pgdir, (void*)i, 0)) == 0)
+    {
+      panic("copyuvm: pte should exist");
+    }
+    if(!(*pte & PTE_P))
+    {
+      panic("copyuvm: page not present");
+    }
+    pa = PTE_ADDR(*pte);
+    for (j = 0; j < MAXKEYS; ++j)
+    {
+      for (k = 0; k < MAXKEYPGS; ++k)
+      {
+        if (curproc->pshpgs[j]->pgvas[k] == (void*)i)
+        {
+          break;
+        }
+      }
+    }
+    if (mappages(d, (void*)i, PGSIZE, V2P(curproc->pshpgs[j]->pgvas[k]), PTE_W|PTE_U) < 0)
+    {
+      goto bad;
+    }
+  }
+  for(i = 0; i < MAXKEYS; i++) {
+    if(curproc->keys[i] == 1) {
+      curproc->pshpgs[i]->refcount++;
+    }
+  }
+
   return d;
 
 bad:
