@@ -102,7 +102,7 @@ sys_getshpg(void)
   int key;
   int numPages;
 
-  if (argint(0, &key) < 0 || argint(1, &size) < 0)
+  if (argint(0, &key) < 0 || argint(1, &numPages) < 0)
   {
     return -1; //error in passed arguments
   }

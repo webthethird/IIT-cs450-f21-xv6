@@ -225,7 +225,7 @@ allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
   char *mem;
   uint a;
 
-  if(newsz >= KERNBASE)
+  if(newsz >= KERNBASE) //do we need to change this?
     return 0;
   if(newsz < oldsz)
     return oldsz;
@@ -284,15 +284,34 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
 void
 freevm(pde_t *pgdir)
 {
-  uint i;
+  uint i, j, k;
 
   if(pgdir == 0)
     panic("freevm: no pgdir");
   deallocuvm(pgdir, KERNBASE, 0);
   for(i = 0; i < NPDENTRIES; i++){
+    bool shared = false;
     if(pgdir[i] & PTE_P){
       char * v = P2V(PTE_ADDR(pgdir[i]));
-      kfree(v);
+      for (j = 0; j < MAXKEYS; ++j)
+      {
+        for (k = 0; k < MAXKEYPGS; ++k)
+        {
+          if ((char*)(shpgs[j]->pgvas[k]) == v)
+          {
+            shared = true;
+            break;
+          }
+        }
+        if (shared)
+        {
+          break;
+        }
+      }
+      if (!shared)
+      {
+        kfree(v);
+      }
     }
   }
   kfree((char*)pgdir);
@@ -389,7 +408,7 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
 //PAGEBREAK!
 
 void
-initshgs()
+initshpgs(void)
 {
   for (int i = 0; i < MAXKEYS; ++i)
   {
