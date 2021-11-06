@@ -387,7 +387,28 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
 }
 
 //PAGEBREAK!
-// Blank page.
+
+void
+initshgs()
+{
+  for (int i = 0; i < MAXKEYS; ++i)
+  {
+    shpgs[i]->
+  }
+}
+
+int 
+getshpg(int key, int numPages)
+{
+
+}
+
+int
+freeshpg(int key)
+{
+
+}
+
 //PAGEBREAK!
 // Blank page.
 //PAGEBREAK!

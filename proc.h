@@ -37,6 +37,8 @@ struct shpg {
   void *pgvas[MAXKEYPGS];
   int refcount;
   int numpgs;
+  //josh changes
+  int key;
 };
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };

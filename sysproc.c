@@ -99,6 +99,16 @@ sys_uptime(void)
 int
 sys_getshpg(void)
 {
+  int key;
+  int numPages;
+
+  if (argint(0, &key) < 0 || argint(1, &size) < 0)
+  {
+    return -1; //error in passed arguments
+  }
+
+  //go to vm.c to do actual shared memory management
+  return getshpg(key, numPages);
 
 }
 
@@ -108,5 +118,14 @@ sys_getshpg(void)
 int
 sys_freeshpg(void)
 {
+  int key;
+  
+  if (argint(0, &key) < 0)
+  {
+    return -1; //error in passed argument
+  }
+
+  //go to vm.c to do actual shared memory management
+  return freeshpg(key);
 
 }
