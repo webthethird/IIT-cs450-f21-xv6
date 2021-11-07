@@ -297,7 +297,7 @@ freevm(pde_t *pgdir)
       {
         for (k = 0; k < MAXKEYPGS; ++k)
         {
-          if ((char*)(shpgs[j]->pgvas[k]) == v)
+          if ((char*)(shpgs[j]->address[k]) == v)
           {
             shared = 1;
             break;
@@ -375,13 +375,13 @@ copyuvm(pde_t *pgdir, uint sz)
     {
       for (k = 0; k < MAXKEYPGS; ++k)
       {
-        if (curproc->pshpgs[j]->pgvas[k] == (void*)i)
+        if (curproc->pshpgs[j]->address[k] == (void*)i)
         {
           break;
         }
       }
     } //may need to change to vm.c shared pages array?
-    if (mappages(d, (void*)i, PGSIZE, V2P(curproc->pshpgs[j]->pgvas[k]), PTE_W|PTE_U) < 0)
+    if (mappages(d, (void*)i, PGSIZE, V2P(curproc->pshpgs[j]->address[k]), PTE_W|PTE_U) < 0)
     {
       goto bad;
     }
@@ -537,8 +537,6 @@ freeshpg(int key)
     pte &= ~PTE_P;
     if(shpg->refcount == 0) {
       kfree(P2V(shpg->address[i]));
-      shpg->isused = 0;
-
     }
   }
   curproc->pshpgs[key] = 0;
