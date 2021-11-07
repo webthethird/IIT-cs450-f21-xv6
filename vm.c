@@ -380,7 +380,7 @@ copyuvm(pde_t *pgdir, uint sz)
           break;
         }
       }
-    }
+    } //may need to change to vm.c shared pages array?
     if (mappages(d, (void*)i, PGSIZE, V2P(curproc->pshpgs[j]->pgvas[k]), PTE_W|PTE_U) < 0)
     {
       goto bad;
