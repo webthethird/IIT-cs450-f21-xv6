@@ -34,8 +34,7 @@ struct context {
 
 struct shpg {
   int isused;
-  void *pgpas[MAXKEYPGS];
-  void *pgvas[MAXKEYPGS];
+  void *address[MAXKEYPGS];
   int refcount;
   int numpgs;
   //josh changes

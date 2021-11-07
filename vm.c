@@ -447,12 +447,19 @@ initshpgs(void)
 {
   for (int i = 0; i < MAXKEYS; ++i)
   {
-   
+    shpgs[i]->isused = 0;
+    for (int j = 0; j < MAXKEYPGS; ++j)
+    {
+      shpgs[i]->address[j] = 0;
+    }
+    shpgs[i]->refcount = 0;
+    shpgs[i]->numpgs = 0;
+    shpgs[i]->key = -1;
   }
 }
 
 void* 
-getshpg(int key, int numpages)
+getshpg(int key, int numpages) //need to readd error checking
 {
   if(key >= MAXKEYS || numpages > MAXKEYPGS) {
     return (void*)-1;
@@ -463,19 +470,13 @@ getshpg(int key, int numpages)
     // If the process has already called getshpg with this key,
     // what should we do? Return the same VA it returned before?
     // What if the numpages is different this time?
+    return (void*)-1;
   } else {
     curproc->keys[key] = 1;
     shpgs[key]->refcount++;
   }
-  if(shpgs[key]->isused) {
-    // Key is in use already
-    
-  } else {
-    // Key has not been used yet
-    if((curproc->shbot - numpages*PGSIZE) < curproc->sz) {
-      // Pages cannot be allocated
-      return (void*)-1;
-    }
+  if(!(shpgs[key]->isused)) {
+    //gotta allocate pages
     shpgs[key]->isused = 1;
     shpgs[key]->numpgs = numpages;
     // Allocate physical pages and map them to VAs
@@ -486,15 +487,30 @@ getshpg(int key, int numpages)
         return (void*)-1;
       }
       memset(shpa, 0, PGSIZE);
-      shpgs[key]->pgpas[i] = shpa;
-      // Map the allocated physical page to the next available
-      // virtual address at the top of the process memory space.
-      void *pva = (void*)(curproc->shbot - PGSIZE);
-
+      shpgs[key]->address[i] = V2P(shpa);
     }
+    shpgs[key]->refcount = 0;
+    shpgs[key]->key = key;
+  }
+  struct shpg *source = shpgs[key];
+  struct shpg *destination = curproc->pshpgs[key];
+
+  destination->isused = source->isused;
+
+  void *va = curproc->shbot;
+  for (int i = 0; i < numpages; ++i)
+  {
+    curproc->shbot -= PGSIZE;
+    destination->address[i] = (void *)curproc->shbot;
+    mappages(curproc->pgdir, destination->address[i], PGSIZE, source->address[i], PTE_W|PTE_U); 
   }
 
-  return 0;
+  source->refcount++;
+  destination->refcount = source->refcount;
+  destination->numpgs = source->numpgs;
+  destination->key = source->key;
+
+  return destination->address[0];
 }
 
 // Look for key in the current process's key array.
@@ -508,18 +524,29 @@ freeshpg(int key)
   if(curproc->keys[key] != 1) {
     return -1;
   }
-  shpg = curproc->pshpgs[key];
+  shpg = shpgs[key];
   if(shpg == 0) {
     return -1;
   }
   shpg->refcount--;
   curproc->keys[key] = 0;
-  curproc->pshpgs[key] = 0;
+  pte_t *pte;
   for(i = 0; i < shpg->numpgs; i++) {
-    curproc->shbot += PGSIZE;
+    curproc->shbot += PGSIZE; //need to check if called on not the latest shared page, might not increase shbot
+    pte = walkpgdir(curproc->pgdir, curproc->pshpgs[key]->address[i], 0);
+    pte &= ~PTE_P;
     if(shpg->refcount == 0) {
-      kfree(shpg->pgvas[i]);
+      kfree(P2V(shpg->address[i]));
+      shpg->isused = 0;
+
     }
+  }
+  curproc->pshpgs[key] = 0;
+  if (shpg->refcount == 0)
+  {
+    shpg->isused = 0;
+    shpg->numpgs = 0;
+    shpg->key = -1;
   }
   return 0;
 }
