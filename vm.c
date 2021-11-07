@@ -451,9 +451,49 @@ initshpgs(void)
   }
 }
 
-int 
-getshpg(int key, int numPages)
+void* 
+getshpg(int key, int numpages)
 {
+  if(key >= MAXKEYS || numpages > MAXKEYPGS) {
+    return (void*)-1;
+  }
+  struct proc *curproc = myproc();
+
+  if(curproc->keys[key]) {
+    // If the process has already called getshpg with this key,
+    // what should we do? Return the same VA it returned before?
+    // What if the numpages is different this time?
+  } else {
+    curproc->keys[key] = 1;
+    shpgs[key]->refcount++;
+  }
+  if(shpgs[key]->isused) {
+    // Key is in use already
+    
+  } else {
+    // Key has not been used yet
+    if((curproc->shbot - numpages*PGSIZE) < curproc->sz) {
+      // Pages cannot be allocated
+      return (void*)-1;
+    }
+    shpgs[key]->isused = 1;
+    shpgs[key]->numpgs = numpages;
+    // Allocate physical pages and map them to VAs
+    for(int i = 0; i < numpages; i++) {
+      void *shpa = kalloc();
+      if(shpa == 0) {
+        // kalloc() failed
+        return (void*)-1;
+      }
+      memset(shpa, 0, PGSIZE);
+      shpgs[key]->pgpas[i] = shpa;
+      // Map the allocated physical page to the next available
+      // virtual address at the top of the process memory space.
+      void *pva = (void*)(curproc->shbot - PGSIZE);
+
+    }
+  }
+
   return 0;
 }
 
@@ -462,26 +502,23 @@ getshpg(int key, int numPages)
 int
 freeshpg(int key)
 {
-  int i, j;
-  struct shpg* shpg = 0;
+  int i;
+  struct shpg *shpg = 0;
   struct proc *curproc = myproc();
-  for(i = 0; i < MAXKEYS; i++) {
-    if(curproc->keys[i] == key) {
-      shpg = curproc->pshpgs[i];
-      break;
-    }
+  if(curproc->keys[key] != 1) {
+    return -1;
   }
+  shpg = curproc->pshpgs[key];
   if(shpg == 0) {
     return -1;
   }
   shpg->refcount--;
-  curproc->keys[i] = 0;
-  curproc->pshpgs[i] = 0;
-  for(j = 0; j < shpg->numpgs; j++) {
+  curproc->keys[key] = 0;
+  curproc->pshpgs[key] = 0;
+  for(i = 0; i < shpg->numpgs; i++) {
     curproc->shbot += PGSIZE;
     if(shpg->refcount == 0) {
-      kfree(shpg->pgvas[j]);
-
+      kfree(shpg->pgvas[i]);
     }
   }
   return 0;
