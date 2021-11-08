@@ -442,6 +442,8 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
 
 //PAGEBREAK!
 
+// Zero out all values for all shared page structs
+// in the array shpgs which is kept in the kernel
 void
 initshpgs(void)
 {
@@ -458,8 +460,14 @@ initshpgs(void)
   }
 }
 
+// Returns a pointer to a shared page of memory,
+// mapped into the high end of the process's VA space,
+// given a integer key and a number of pages requested.
+// If the key has not been used yet by any process, then
+// allocate the page(s) and store the mappings in memory,
+// otherwise provide access to the existing shared page(s).
 void* 
-getshpg(int key, int numpages) //need to readd error checking
+getshpg(int key, int numpages)
 {
   if(key >= MAXKEYS || key < 0 || numpages > MAXKEYPGS || numpages <= 0) {
     return (void*)-1;
@@ -468,13 +476,19 @@ getshpg(int key, int numpages) //need to readd error checking
 
   if(curproc->keys[key]) {
     // The process has already called getshpg with this key
-    return (void*)-1;
+    if(curproc->pshpgs[key].numpgs != numpages) {
+      // Number of pages does not match
+      return (void*)-1;
+    } else {
+      // Number of pages matches, so just return the address again
+      return curproc->pshpgs[key].address[0];
+    }
   } else {
     curproc->keys[key] = 1;
     shpgs[key].refcount++;
   }
   if(!(shpgs[key].isused)) {
-    //gotta allocate pages
+    // gotta allocate pages
     shpgs[key].isused = 1;
     shpgs[key].numpgs = numpages;
     // Allocate physical pages and map them to VAs
@@ -489,6 +503,12 @@ getshpg(int key, int numpages) //need to readd error checking
     }
     shpgs[key].refcount = 0;
     shpgs[key].key = key;
+  } else {
+    // key is already in use by one or more processes
+    if(numpages > shpgs[key].numpgs) {
+      // cannot add more shared pages to existing key
+      return (void*)-1;
+    }
   }
   struct shpg *source = &shpgs[key];
   struct shpg *destination = &curproc->pshpgs[key];
@@ -500,7 +520,11 @@ getshpg(int key, int numpages) //need to readd error checking
   {
     curproc->shbot -= PGSIZE;
     destination->address[i] = (void *)curproc->shbot;
-    mappages(curproc->pgdir, destination->address[i], PGSIZE, V2P(source->address[i]), PTE_P|PTE_W|PTE_U); 
+    int ret;
+    if((ret = mappages(curproc->pgdir, destination->address[i], PGSIZE, V2P(source->address[i]), PTE_P|PTE_W|PTE_U)) < 0) {
+      // mappages failed
+      return (void*)-1;
+    } 
   }
 
   source->refcount++;
@@ -531,7 +555,7 @@ freeshpg(int key)
   curproc->keys[key] = 0;
   pte_t *pte;
   for(i = 0; i < shpg.numpgs; i++) {
-    curproc->shbot += PGSIZE; //need to check if called on not the latest shared page, might not increase shbot
+    curproc->shbot += PGSIZE;
     pte = walkpgdir(curproc->pgdir, curproc->pshpgs[key].address[i], 0);
     *pte &= ~PTE_P;
     if(shpg.refcount == 0) {
