@@ -4,11 +4,11 @@
 
 int main(int argc, char const *argv[])
 {
-  //test if a process can call getSharedPages and then free them and exit
+  //1. test if a process can call getSharedPages and then free them and exit
   // char *page = getshpg(0, 1);
   // freeshpg(0);
 
-  //test if a process can call getSharedPages, write to those pages, and read from the pages, 
+  //2. test if a process can call getSharedPages, write to those pages, and read from the pages, 
   //then after calling freeSharedPages, it can no longer read from them
   /*
   char *page = getshpg(0, 1);
@@ -21,7 +21,7 @@ int main(int argc, char const *argv[])
   printf(1, "After freeshpg: %s\n", str1);
   */
 
-  //test if a process can call getSharedPages, then call getSharedPages with a different key, 
+  //3. test if a process can call getSharedPages, then call getSharedPages with a different key, 
   //do different work on each, then free the first key, read from the second, then free that too
   char *page1 = getshpg(0, 2);
   char *page2 = getshpg(1, 1);
@@ -30,7 +30,20 @@ int main(int argc, char const *argv[])
   printf(1, "%s\n", page2);
   freeshpg(1);
 
-  //test if a two processes can call getsharedpages, one can write, and the other can read
+  //4. test that a process can call getSharedPages twice, then free the first shared page, and then 
+  //call getSharedPages again. tests if shbot decrementing works properly
+  /*
+  char *page1 = getshpg(0, 1);
+  char *page2 = getshpg(1, 1);
+  strcpy(page2, "Testing testing 1, 2, 3");
+  freeshpg(0);
+  char *page3 = getshpg(2, 1);
+  printf(1, "%s\n", page2);
+  freeshpg(1);
+  freeshpg(2);
+  */
+
+  //5. test if a two processes can call getsharedpages, one can write, and the other can read
   /*
   int ret;
   char *page;
@@ -51,7 +64,7 @@ int main(int argc, char const *argv[])
   // }
   */
 
-  //test that two processes can call getsharedpages with different keys and get different pages
+  //6. test that two processes can call getsharedpages with different keys and get different pages
   /*
   int ret, key;
   char *page;
@@ -68,5 +81,7 @@ int main(int argc, char const *argv[])
   }
   freeshpg(key);
   */
+
+  //7. 
   exit();
 }
