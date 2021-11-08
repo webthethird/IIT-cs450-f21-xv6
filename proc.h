@@ -60,7 +60,7 @@ struct proc {
   char name[16];               // Process name (debugging)
   int shbot;                   // Next available page address from top
   int keys[MAXKEYS];           // Shared page keys used by process
-  struct shpg *pshpgs[MAXKEYS];   // Shared page structs used
+  struct shpg pshpgs[MAXKEYS]; // Shared page structs used
 };
 
 // Process memory is laid out contiguously, low addresses first:

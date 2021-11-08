@@ -106,7 +106,13 @@ found:
   // Zero fill process shared pages and keys.
   for(k = 0; k < MAXKEYS; k++) {
     p->keys[k] = 0;
-    p->pshpgs[k] = 0;
+    p->pshpgs[k].isused = 0;
+    p->pshpgs[k].numpgs = 0;
+    p->pshpgs[k].refcount = 0;
+    p->pshpgs[k].key = -1;
+    for(int a = 0; a < MAXKEYPGS; a++) {
+      p->pshpgs[k].address[a] = 0;
+    }
   }
 
   // Set the bottom of the shared page space, which grows
@@ -214,9 +220,9 @@ fork(void)
   // Copy over any shared pages to the child process.
   for(i = 0; i < MAXKEYS; i++) {
     np->keys[i] = curproc->keys[i];
-    if(curproc->pshpgs[i] != 0) {
+    if(curproc->pshpgs[i].isused != 0) {
       // If curproc is sharing a page, increment its refcount.
-      curproc->pshpgs[i]->refcount += 1;
+      curproc->pshpgs[i].refcount += 1;
     }
     np->pshpgs[i] = curproc->pshpgs[i];
   }
