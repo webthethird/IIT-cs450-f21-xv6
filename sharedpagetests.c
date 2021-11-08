@@ -21,11 +21,17 @@ int main(int argc, char const *argv[])
   printf(1, "After freeshpg: %s\n", str1);
   */
 
-  //test if a process can call getSharedPages, then call getSharedPages with a different key, do different work on each
-  //and then free those pages
+  //test if a process can call getSharedPages, then call getSharedPages with a different key, 
+  //do different work on each, then free the first key, read from the second, then free that too
+  char *page1 = getshpg(0, 2);
+  char *page2 = getshpg(1, 1);
+  strcpy(page2, "Testing testing 1, 2, 3");
+  freeshpg(0);
+  printf(1, "%s\n", page2);
+  freeshpg(1);
 
   //test if a two processes can call getsharedpages, one can write, and the other can read
-  
+  /*
   int ret;
   char *page;
   if((ret = fork()) == 0) {
@@ -43,6 +49,7 @@ int main(int argc, char const *argv[])
   //   printf(1, "Child reading after freeing: %s\n", page);
   //   strcpy(page, "(this shouldn't be here)");
   // }
+  */
 
   //test that two processes can call getsharedpages with different keys and get different pages
   /*
