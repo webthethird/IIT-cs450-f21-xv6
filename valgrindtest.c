@@ -55,16 +55,6 @@ int main(int argc, char const *argv[])
   free(root);
   */
 
-  //test code where we malloc a lot and never free
-  /*
-  int **arr = malloc(sizeof(int*) * 100);
-
-  for (int i = 0; i < 100; ++i)
-  {
-    arr[i] = malloc(sizeof(int) * 20);
-  }
-  */
-
   //test code to malloc a pointer, add to the pointer, and then free
   int *arr = malloc(sizeof(int) * 5);
   arr += 5;
