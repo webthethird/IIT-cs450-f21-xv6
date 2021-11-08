@@ -2,6 +2,25 @@ NOTE: this is a private fork of mit-pdos/xv6-public, for use in paired
 programming assignments for CS450: Operating Systems in Fall 2021 at the
 Illinois Institute of Technology in Chicago.
 
+## Assignment 3: Shared Memory Pages
+### How to Build and Execute
+#### Part 1
+* Make sure that valgrind is installed!
+* Navigate to this directory in the terminal
+* Open `valgrindtest.c` in your favorite text editor, uncomment the block of test code you wish to run, and save the file
+* In the terminal, enter `gcc -o vgtest valgrindtest.c` to compile the code
+* Enter `valgrind --leak-check=full ./vgtest` to run the test and print the results
+* Repeat steps 3-5 to run each test
+#### Part 2
+* Make sure that qemu is installed!
+* Navigate to this directory in the terminal
+* Open sharedpagetests.c in your favorite text editor, uncomment the block of test code you wish to run, and save the 
+* In the terminal, enter `make` to build xv6, then `make qemu-nox` to launch the emulator
+* In the xv6 shell, enter `sharedpagetests` to run the test (no arguments are necessary)
+* Repeat steps 3-5 to run each test
+
+--------
+
 xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
 Version 6 (v6).  xv6 loosely follows the structure and style of v6,
 but is implemented for a modern x86-based multiprocessor using ANSI C.
