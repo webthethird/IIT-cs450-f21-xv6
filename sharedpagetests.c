@@ -13,6 +13,7 @@ int main(int argc, char const *argv[])
   //and then free those pages
 
   //test if a two processes can call getsharedpages, one can write, and the other can read
+  /*
   int ret;
   char *page;
   if((ret = fork()) == 0) {
@@ -25,7 +26,22 @@ int main(int argc, char const *argv[])
     printf(1, "Parent reading: %s\n", page);
   }
   freeshpg(0);
+  */
   //test that two processes can call getsharedpages with different keys and get different pages
-  
+  int ret, key;
+  char *page;
+  if((ret = fork()) == 0) {
+    key = 0;
+    page = getshpg(key, 1);
+    strcpy(page, "Hello from child");
+    sleep(1000);
+  } else {
+    key = 1;
+    page = getshpg(1, 1);
+    wait();
+    printf(1, "Parent reading: %s\n", page);
+  }
+  freeshpg(key);
+
   exit();
 }
