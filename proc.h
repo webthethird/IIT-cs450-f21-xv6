@@ -1,3 +1,9 @@
+/*
+xv6 modified by:
+William Bodell - CWID: A20465701
+Josh Greenberg - CWID: A20472596
+*/
+
 // Per-CPU state
 struct cpu {
   uchar apicid;                // Local APIC ID
