@@ -668,3 +668,56 @@ nameiparent(char *path, char *name)
 {
   return namex(path, 1, name);
 }
+
+struct inode**
+walkinodetb(uint dev)
+{
+  int inum;
+  struct inode *ip;
+  struct inode *inodes[sb.ninodes];
+
+  for(inum = 1; inum < sb.ninodes; inum++){
+    ip = iget(dev, inum);
+    ilock(ip);
+    inodes[inum] = ip;
+    iunlock(ip);
+  }
+
+  return inodes;
+}
+
+struct dirent**
+walkdir(uint dev, char *path)
+{
+  struct dirent *dirents[sb.ninodes];
+  walkdirrecursive(dev, path, dirents);
+  return dirents;
+}
+
+void
+walkdirrecursive(uint dev, char *path, struct dirent **ret)
+{
+  struct inode *ip;
+  uint off, inum;
+  struct dirent de;
+  char *nextpath;
+
+  ip = namei(&path);
+  if(ip->type == T_DIR) {
+    for(off = 0; off < ip->size; off += sizeof(de)){
+      ilock(ip);
+      if(readi(ip, (char*)&de, off, sizeof(de)) != sizeof(de))
+        panic("dirlookup read");
+      iunlock(ip);
+      if(de.inum == 0)
+        continue;
+      strncpy(nextpath, path, strlen(path));
+      strncpy(nextpath[strlen(path)], de.name, DIRSIZ);
+      walkdirrecursive(dev, nextpath, ret);
+    }
+  } else {
+    ip = nameiparent(&path);
+    de = dirlookup(ip);
+    iunlock(ip);
+  }
+}
