@@ -15,6 +15,7 @@ struct sleeplock;
 struct stat;
 struct superblock;
 struct shpg;
+struct dirent;
 
 // bio.c
 void            binit(void);
@@ -58,6 +59,9 @@ struct inode*   nameiparent(char*, char*);
 int             readi(struct inode*, char*, uint, uint);
 void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, char*, uint, uint);
+struct inode**  walkinodetb(uint);
+int             walkdir(uint, char*, struct dirent**);
+void            walkdirrec(uint, struct inode*, struct dirent**);
 
 // ide.c
 void            ideinit(void);

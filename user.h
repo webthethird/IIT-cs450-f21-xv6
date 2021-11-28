@@ -5,6 +5,7 @@ Josh Greenberg - CWID: A20472596
 */
 struct stat;
 struct rtcdate;
+struct dirent;
 
 // system calls
 int fork(void);
@@ -30,6 +31,7 @@ int sleep(int);
 int uptime(void);
 void* getshpg(int, int);
 int freeshpg(int);
+int walkdir(uint, char*, struct dirent**);
 
 // ulib.c
 int stat(const char*, struct stat*);

@@ -686,38 +686,48 @@ walkinodetb(uint dev)
   return inodes;
 }
 
-struct dirent**
-walkdir(uint dev, char *path)
+int
+walkdir(uint dev, char *path, struct dirent **dest)
 {
-  struct dirent *dirents[sb.ninodes];
-  walkdirrecursive(dev, path, dirents);
-  return dirents;
+  struct inode *ip;
+
+  ip = namei(path);
+  ilock(ip);
+  if(ip->type != T_DIR) {
+    iunlock(ip);
+    return -1;
+  }
+  iunlock(ip);
+  walkdirrec(dev, ip, dest);
+  return 0;
 }
 
 void
-walkdirrecursive(uint dev, char *path, struct dirent **ret)
+walkdirrec(uint dev, struct inode *dp, struct dirent **dest)
 {
-  struct inode *ip;
-  uint off, inum;
+  uint off, inum, size;
   struct dirent de;
-  char *nextpath;
+  struct inode *ip;
 
-  ip = namei(&path);
-  if(ip->type == T_DIR) {
-    for(off = 0; off < ip->size; off += sizeof(de)){
-      ilock(ip);
-      if(readi(ip, (char*)&de, off, sizeof(de)) != sizeof(de))
-        panic("dirlookup read");
+  ilock(dp);
+  size = dp->size;
+  iunlock(dp);
+
+  for(off = 0; off < size; off += sizeof(de)){
+    ilock(dp);
+    if(readi(dp, (char*)&de, off, sizeof(de)) != sizeof(de))
+      panic("dirlookup read");
+    iunlock(dp);
+    if(de.inum == 0)
+      continue;
+    *dest[de.inum] = de;  // Add directory entry to output array
+    ip = iget(dev, de.inum);
+    ilock(ip);
+    if(ip->type == T_DIR){
       iunlock(ip);
-      if(de.inum == 0)
-        continue;
-      strncpy(nextpath, path, strlen(path));
-      strncpy(nextpath[strlen(path)], de.name, DIRSIZ);
-      walkdirrecursive(dev, nextpath, ret);
+      walkdirrec(dev, ip, dest);
+    } else {
+      iunlock(ip);
     }
-  } else {
-    ip = nameiparent(&path);
-    de = dirlookup(ip);
-    iunlock(ip);
   }
 }
