@@ -446,23 +446,22 @@ sys_pipe(void)
 int
 sys_walkdir(void)
 {
-  int dev;
   char *path;
   struct superblock sb;
   struct dirent **dest;
 
-  begin_op();
+  // begin_op();
   readsb(ROOTDEV, &sb);
   cprintf("sb.ninodes = %d\n", sb.ninodes);
 
-  if(argint(0, &dev) < 0 || argstr(1, &path) < 0 || argptr(2, (char**)&dest, sizeof(dest)) < 0){
-    end_op();
+  if(argstr(0, &path) < 0 || argptr(1, (char**)&dest, sizeof(dest)) < 0){
+    // end_op();
     return -1;
   }
   struct dirent dirents[sb.ninodes];
   *dest = dirents;
-  end_op();
-  return walkdir(dev, path, dest);
+  // end_op();
+  return walkdir(path, dest);
 }
 
 int

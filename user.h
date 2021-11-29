@@ -31,7 +31,7 @@ int sleep(int);
 int uptime(void);
 void* getshpg(int, int);
 int freeshpg(int);
-int walkdir(uint, char*, struct dirent**);
+int walkdir(char*, struct dirent**);
 
 // ulib.c
 int stat(const char*, struct stat*);

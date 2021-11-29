@@ -687,7 +687,7 @@ walkinodetb(uint dev)
 }
 
 int
-walkdir(uint dev, char *path, struct dirent **dest)
+walkdir(char *path, struct dirent **dest)
 {
   struct inode *ip;
 
@@ -697,35 +697,33 @@ walkdir(uint dev, char *path, struct dirent **dest)
     iunlock(ip);
     return -1;
   }
+  // iunlock(ip);
+  walkdirrec(ip, dest);
   iunlock(ip);
-  walkdirrec(dev, ip, dest);
   return 0;
 }
 
 void
-walkdirrec(uint dev, struct inode *dp, struct dirent **dest)
+walkdirrec(struct inode *dp, struct dirent **dest)
 {
   uint off, inum, size;
   struct dirent de;
   struct inode *ip;
 
-  ilock(dp);
-  size = dp->size;
-  iunlock(dp);
-
-  for(off = 0; off < size; off += sizeof(de)){
-    ilock(dp);
+  for(off = 0; off < dp->size; off += sizeof(de)){
+    // ilock(dp);
     if(readi(dp, (char*)&de, off, sizeof(de)) != sizeof(de))
       panic("dirlookup read");
-    iunlock(dp);
+    // iunlock(dp);
     if(de.inum == 0)
       continue;
     *dest[de.inum] = de;  // Add directory entry to output array
-    ip = iget(dev, de.inum);
+    ip = iget(dp->dev, de.inum);
     ilock(ip);
     if(ip->type == T_DIR){
+      // iunlock(ip);
+      walkdirrec(ip, dest);
       iunlock(ip);
-      walkdirrec(dev, ip, dest);
     } else {
       iunlock(ip);
     }

@@ -11,7 +11,8 @@ Josh Greenberg - CWID: A20472596
 int main(int argc, char const *argv[])
 {
     struct dirent *dest[1000];
-    uint dev = 1;
-    walkdir(dev, "/", dest);
+    mkdir("/test");
+    chdir("/test");
+    walkdir("/", dest);
     exit();
 }
