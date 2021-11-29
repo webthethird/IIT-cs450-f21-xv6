@@ -468,5 +468,11 @@ sys_walkdir(void)
 int
 sys_intbwalk(void)
 {
-  return -1;
+  int dev;
+  int *inums;
+  if (argint(0, &dev) < 0 || argptr(1, (void *)&inums, sizeof(inums)) < 0)
+  {
+    return -1;
+  }
+  return walkinodetb(dev, inums);
 }
