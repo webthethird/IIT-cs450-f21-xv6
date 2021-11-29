@@ -118,6 +118,7 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_getshpg(void);
 extern int sys_freeshpg(void);
+extern int sys_intbwalk(void);
 extern int sys_walkdir(void);
 
 static int (*syscalls[])(void) = {
@@ -145,6 +146,7 @@ static int (*syscalls[])(void) = {
 [SYS_getshpg]   sys_getshpg,
 [SYS_freeshpg]  sys_freeshpg,
 [SYS_walkdir]   sys_walkdir,
+[SYS_intbwalk]  sys_intbwalk,
 };
 
 void

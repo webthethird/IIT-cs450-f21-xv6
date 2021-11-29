@@ -59,7 +59,7 @@ struct inode*   nameiparent(char*, char*);
 int             readi(struct inode*, char*, uint, uint);
 void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, char*, uint, uint);
-struct inode**  walkinodetb(uint);
+int             walkinodetb(uint, int*);
 int             walkdir(char*, struct dirent**);
 void            walkdirrec(struct inode*, struct dirent**);
 

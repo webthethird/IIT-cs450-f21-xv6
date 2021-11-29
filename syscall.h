@@ -28,4 +28,4 @@ Josh Greenberg - CWID: A20472596
 #define SYS_getshpg     22
 #define SYS_freeshpg    23
 #define SYS_walkdir     24
-// #define SYS_itbwalk     25
+#define SYS_intbwalk    25

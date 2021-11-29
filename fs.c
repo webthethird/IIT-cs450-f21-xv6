@@ -669,21 +669,29 @@ nameiparent(char *path, char *name)
   return namex(path, 1, name);
 }
 
-struct inode**
-walkinodetb(uint dev)
+int
+walkinodetb(uint dev, int *inums)
 {
-  int inum;
+  int inum, index;
   struct inode *ip;
-  struct inode *inodes[sb.ninodes];
+  int inodes[sb.ninodes];
 
   for(inum = 1; inum < sb.ninodes; inum++){
     ip = iget(dev, inum);
     ilock(ip);
-    inodes[inum] = ip;
+    if (ip->type != 0) //allocated inode
+    {
+      inodes[index] = inum;
+    }
+    index++;
     iunlock(ip);
   }
-
-  return inodes;
+  index = 0;
+  while (inodes[index] != 0) {
+    inums[index] = inodes[index];
+    index++;
+  }
+  return 0;
 }
 
 int
