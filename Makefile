@@ -183,6 +183,7 @@ UPROGS=\
 	_zombie\
 	_sharedpagetests\
 	_directoryWalker\
+	_inodeWalker\
 
 fs.img: mkfs README.md $(UPROGS)
 	./mkfs fs.img README.md $(UPROGS)

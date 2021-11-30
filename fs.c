@@ -672,7 +672,8 @@ nameiparent(char *path, char *name)
 int
 walkinodetb(uint dev, struct inode **inums)
 {
-  int inum, index;
+  int inum;
+  int index = 0;
   struct inode *ip;
   struct inode *inodes[sb.ninodes];
 
@@ -716,7 +717,7 @@ walkdir(char *path, struct dirent *dirents, struct inode *inodes)
 void
 walkdirrec(struct inode *dp, struct dirent *dirents, struct inode *inodes, uint *i)
 {
-  uint off, inum;
+  uint off;
   struct dirent de;
   struct inode *ip;
 
