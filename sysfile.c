@@ -447,31 +447,40 @@ int
 sys_walkdir(void)
 {
   char *path;
-  struct superblock sb;
-  struct dirent **dest;
+  // struct superblock sb;
+  struct dirent *dirents;
+  struct inode *inodes;
 
-  // begin_op();
-  readsb(ROOTDEV, &sb);
-  cprintf("sb.ninodes = %d\n", sb.ninodes);
+  begin_op();
+  // readsb(ROOTDEV, &sb);
+  // cprintf("sb.ninodes = %d\n", sb.ninodes);
 
-  if(argstr(0, &path) < 0 || argptr(1, (char**)&dest, sizeof(dest)) < 0){
-    // end_op();
+  if(argstr(0, &path) < 0 || argptr(1, (char**)&dirents, sizeof(dirents)) < 0 || argptr(2, (char**)&inodes, sizeof(inodes)) < 0){
+    end_op();
     return -1;
   }
-  struct dirent dirents[sb.ninodes];
-  *dest = dirents;
-  // end_op();
-  return walkdir(path, dest);
+  
+  walkdir(path, dirents, inodes);
+  end_op();
+  return 0;
 }
 
 int
-sys_intbwalk(void)
+sys_walkinodetb(void)
 {
   int dev;
-  int *inums;
+  struct superblock sb;
+
+  begin_op();
+  readsb(ROOTDEV, &sb);
+
+  struct inode *inums[sb.ninodes];
+
   if (argint(0, &dev) < 0 || argptr(1, (void *)&inums, sizeof(inums)) < 0)
   {
+    end_op();
     return -1;
   }
+  end_op();
   return walkinodetb(dev, inums);
 }
