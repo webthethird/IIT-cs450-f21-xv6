@@ -673,7 +673,7 @@ int
 walkinodetb(uint dev, int *inums)
 {
   int inum;
-  int index;
+  int index = 0;
   struct inode *ip;
   int inodes[sb.ninodes];
 
