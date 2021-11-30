@@ -670,13 +670,14 @@ nameiparent(char *path, char *name)
 }
 
 int
-walkinodetb(uint dev, int *inums)
+walkinodetb(uint dev, struct inode **inums)
 {
   int inum;
   int index = 0;
   struct inode *ip;
-  int inodes[sb.ninodes];
+  int indodes[sb.ninodes];
 
+  index = 0;
   for(inum = 1; inum < sb.ninodes; inum++){
     ip = iget(dev, inum);
     ilock(ip);
@@ -689,16 +690,17 @@ walkinodetb(uint dev, int *inums)
   }
   index = 0;
   while (inodes[index] != 0) {
-    inums[index] = inodes[index];
+    *inums[index] = *inodes[index];
     index++;
   }
   return 0;
 }
 
 int
-walkdir(char *path, struct dirent **dest)
+walkdir(char *path, struct dirent *dirents, struct inode *inodes)
 {
   struct inode *ip;
+  uint i = 0;
 
   ip = namei(path);
   ilock(ip);
@@ -707,34 +709,42 @@ walkdir(char *path, struct dirent **dest)
     return -1;
   }
   // iunlock(ip);
-  walkdirrec(ip, dest);
+  walkdirrec(ip, dirents, inodes, &i);
   iunlock(ip);
   return 0;
 }
 
 void
-walkdirrec(struct inode *dp, struct dirent **dest)
+walkdirrec(struct inode *dp, struct dirent *dirents, struct inode *inodes, uint *i)
 {
   uint off;
   struct dirent de;
   struct inode *ip;
 
+  // ilock(dp);
   for(off = 0; off < dp->size; off += sizeof(de)){
     // ilock(dp);
     if(readi(dp, (char*)&de, off, sizeof(de)) != sizeof(de))
       panic("dirlookup read");
     // iunlock(dp);
-    if(de.inum == 0)
+    *dirents = de;  // Add directory entry to output array
+    dirents += sizeof(de);
+    if(de.inum == 0 || de.inum == dp->inum){
       continue;
-    *dest[de.inum] = de;  // Add directory entry to output array
+    }
     ip = iget(dp->dev, de.inum);
-    ilock(ip);
+    // iunlock(dp);
+    // ilock(ip);
+    *inodes = *ip;
+    inodes += sizeof(ip);
+    // *i = *i + (uint)1;
     if(ip->type == T_DIR){
-      // iunlock(ip);
-      walkdirrec(ip, dest);
+      ilock(ip);
+      walkdirrec(ip, dirents, inodes, i);
       iunlock(ip);
     } else {
-      iunlock(ip);
+      // iunlock(ip);
     }
   }
+  // iunlock(dp);
 }
