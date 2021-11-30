@@ -683,8 +683,8 @@ walkinodetb(uint dev, int *inums)
     if (ip->type != 0) //allocated inode
     {
       inodes[index] = inum;
+      index++;
     }
-    index++;
     iunlock(ip);
   }
   index = 0;

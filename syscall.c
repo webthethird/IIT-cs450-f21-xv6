@@ -118,8 +118,8 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_getshpg(void);
 extern int sys_freeshpg(void);
-extern int sys_intbwalk(void);
 extern int sys_walkdir(void);
+extern int sys_intbwalk(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]      sys_fork,

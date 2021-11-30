@@ -11,8 +11,8 @@ Josh Greenberg - CWID: A20472596
 int main(int argc, char const *argv[])
 {
     int inodes[200];
-    mkdir("/test");
-    chdir("/test");
+    mkdir("test");
+    chdir("test");
     intbwalk(1, inodes);
     int i;
     while (inodes[i] != 0) {
