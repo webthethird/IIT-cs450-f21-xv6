@@ -119,11 +119,8 @@ extern int sys_uptime(void);
 extern int sys_getshpg(void);
 extern int sys_freeshpg(void);
 extern int sys_walkdir(void);
-<<<<<<< HEAD
 extern int sys_walkinodetb(void);
-=======
 extern int sys_getinode(void);
->>>>>>> b65e309e4257b7ff83dc0fd22f2a7ddffff526f7
 
 static int (*syscalls[])(void) = {
 [SYS_fork]      sys_fork,
