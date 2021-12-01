@@ -682,28 +682,21 @@ getinode(uint inum, struct inode* dest)
 }
 
 int
-walkinodetb(uint dev, struct inode **inums)
+walkinodetb(uint dev, int *inums)
 {
   int inum;
   int index = 0;
   struct inode *ip;
-  struct inode *inodes[sb.ninodes];
 
-  index = 0;
   for(inum = 1; inum < sb.ninodes; inum++){
     ip = iget(dev, inum);
     ilock(ip);
     if (ip->type != 0) //allocated inode
     {
-      inodes[index] = ip;
+      inums[index] = inum;
     }
     index++;
     iunlock(ip);
-  }
-  index = 0;
-  while (inodes[index] != 0) {
-    *inums[index] = *inodes[index];
-    index++;
   }
   return 0;
 }
