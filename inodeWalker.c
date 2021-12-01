@@ -13,13 +13,13 @@ Josh Greenberg - CWID: A20472596
 
 int main(int argc, char const *argv[])
 {
-    struct inode *inodes[200];
-    mkdir("/test");
-    chdir("/test");
-    walkinodetb(1, inodes);
-    int i = 0;
-    while ( &inodes[i] != 0) {
-        printf(1, "Inode %d is allocated.\n", inodes[i]->inum);
+    int inodes[200];
+    mkdir("test");
+    chdir("test");
+    intbwalk(1, inodes);
+    int i;
+    while (inodes[i] != 0) {
+        printf("Inode %d is allocated.\n", inodes[i]);
         i++;
     }
     exit();
