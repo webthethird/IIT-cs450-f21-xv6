@@ -61,7 +61,7 @@ void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, char*, uint, uint);
 int             walkinodetb(uint, struct inode**);
 int             walkdir(char*, struct dirent*);
-void            walkdirrec(struct inode*, struct dirent*, uint); 
+struct dirent*  walkdirrec(struct inode*, struct dirent*, uint); 
 
 // ide.c
 void            ideinit(void);

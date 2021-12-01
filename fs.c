@@ -715,7 +715,7 @@ walkdir(char *path, struct dirent *dirents)
   return 0;
 }
 
-void
+struct dirent*
 walkdirrec(struct inode *dp, struct dirent *dirents, uint pinum)
 {
   uint off;
@@ -742,7 +742,7 @@ walkdirrec(struct inode *dp, struct dirent *dirents, uint pinum)
     ilock(ip);
     if(ip->type == T_DIR){
       // ilock(ip);
-      walkdirrec(ip, dirents, dp->inum);
+      dirents = walkdirrec(ip, dirents, dp->inum);
       iunlock(ip);
     } else {
       iunlock(ip);
@@ -750,4 +750,5 @@ walkdirrec(struct inode *dp, struct dirent *dirents, uint pinum)
     }
   }
   // iunlock(dp);
+  return dirents;
 }
