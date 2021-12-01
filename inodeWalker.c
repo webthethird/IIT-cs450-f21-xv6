@@ -13,9 +13,9 @@ Josh Greenberg - CWID: A20472596
 
 int main(int argc, char const *argv[])
 {
-    int inodes[200];
-    mkdir("./test");
-    chdir("test");
+    int *inodes = (int *)malloc(200 * sizeof(int));
+    //mkdir("./foo");
+    //chdir("foo");
     walkinodetb(1, inodes);
     int i = 0;
     while (inodes[i] != 0) {

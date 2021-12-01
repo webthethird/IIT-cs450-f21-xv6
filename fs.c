@@ -675,17 +675,18 @@ walkinodetb(uint dev, int *inums)
 {
   int inum;
   int index = 0;
-  struct inode *ip;
+  struct buf *bp;
+  struct dinode *dip;
 
-  for(inum = 1; inum < sb.ninodes; inum++){
-    ip = iget(dev, inum);
-    ilock(ip);
-    if (ip->type != 0) //allocated inode
+  for(inum = 2; inum < sb.ninodes; inum++){
+    bp = bread(dev, IBLOCK(inum, sb));
+    dip = (struct dinode *)bp->data + inum%IPB;
+    if (dip->type != 0 && dip->nlink > 0) //allocated inode
     {
       inums[index] = inum;
+      index++;
     }
-    index++;
-    iunlock(ip);
+    brelse(bp);
   }
   return 0;
 }

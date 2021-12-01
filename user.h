@@ -33,7 +33,7 @@ int uptime(void);
 void* getshpg(int, int);
 int freeshpg(int);
 int walkdir(char*, struct dirent*);
-int walkinodetb(int, struct inode**);
+int walkinodetb(int, int*);
 
 // ulib.c
 int stat(const char*, struct stat*);
