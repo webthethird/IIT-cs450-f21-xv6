@@ -449,18 +449,18 @@ sys_walkdir(void)
   char *path;
   // struct superblock sb;
   struct dirent *dirents;
-  struct inode *inodes;
+  // struct inode *inodes;
 
   begin_op();
   // readsb(ROOTDEV, &sb);
   // cprintf("sb.ninodes = %d\n", sb.ninodes);
 
-  if(argstr(0, &path) < 0 || argptr(1, (char**)&dirents, sizeof(dirents)) < 0 || argptr(2, (char**)&inodes, sizeof(inodes)) < 0){
+  if(argstr(0, &path) < 0 || argptr(1, (char**)&dirents, sizeof(dirents)) < 0){ //|| argptr(2, (char**)&inodes, sizeof(inodes)) < 0){
     end_op();
     return -1;
   }
   
-  walkdir(path, dirents, inodes);
+  walkdir(path, dirents); //, inodes);
   end_op();
   return 0;
 }

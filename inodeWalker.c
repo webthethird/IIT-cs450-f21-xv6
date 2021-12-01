@@ -6,17 +6,20 @@ Josh Greenberg - CWID: A20472596
 #include "types.h"
 #include "user.h"
 #include "fs.h"
+#include "spinlock.h"
+#include "sleeplock.h"
+#include "file.h"
 
 
 int main(int argc, char const *argv[])
 {
-    int inodes[200];
+    struct inode *inodes[200];
     mkdir("/test");
     chdir("/test");
-    intbwalk(1, inodes);
-    int i;
-    while (inodes[i] != 0) {
-        printf("Inode %d is allocated.\n", inodes[i]);
+    walkinodetb(1, inodes);
+    int i = 0;
+    while ( &inodes[i] != 0) {
+        printf(1, "Inode %d is allocated.\n", inodes[i]->inum);
         i++;
     }
     exit();

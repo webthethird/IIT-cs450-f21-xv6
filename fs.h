@@ -48,10 +48,11 @@ struct dinode {
 #define BBLOCK(b, sb) (b/BPB + sb.bmapstart)
 
 // Directory is a file containing a sequence of dirent structures.
-#define DIRSIZ 14
+#define DIRSIZ 12
 
 struct dirent {
   ushort inum;
+  ushort pinum;       // inum of parent directory
   char name[DIRSIZ];
 };
 
