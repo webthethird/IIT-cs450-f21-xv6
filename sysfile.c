@@ -469,13 +469,9 @@ int
 sys_walkinodetb(void)
 {
   int dev;
-  struct superblock sb;
+  int *inums;
 
   begin_op();
-  readsb(ROOTDEV, &sb);
-
-  struct inode *inums[sb.ninodes];
-
   if (argint(0, &dev) < 0 || argptr(1, (void *)&inums, sizeof(inums)) < 0)
   {
     end_op();
