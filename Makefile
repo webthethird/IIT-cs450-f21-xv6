@@ -184,6 +184,7 @@ UPROGS=\
 	_sharedpagetests\
 	_directoryWalker\
 	_inodeWalker\
+	_compareWalkers\
 
 fs.img: mkfs README.md $(UPROGS)
 	./mkfs fs.img README.md $(UPROGS)
