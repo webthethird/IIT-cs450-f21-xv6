@@ -20,6 +20,12 @@ int main(int argc, char const *argv[])
     struct inode in;
     char* itype;
     int i;
+    
+    if(argc < 2) {
+        argv[1] = "/";
+    }
+    
+    printf("argc: %d\nargv[1]: %s\n", argc, argv[1]);
 
     mkdir("./foo");
     chdir("foo");
@@ -33,28 +39,28 @@ int main(int argc, char const *argv[])
     open("./boo.txt", O_CREATE);
 
     // walkinodetb((uint)1, inods);
-    walkdir("/", dirents);
+    walkdir(argv[1], dirents);
 
     i = 0;
     while ((de = dirents[i]).inum != 0) {
     // for (int i = 0; i < 200 * sizeof(de); i += sizeof(de)) {
         // de = dirents[i];
         getinode(de.inum, &in);
-        // switch(in.type) {
-        //     case(1):
-        //     strcpy(itype, "DIR");
-        //     case(2):
-        //     strcpy(itype, "FILE");
-        //     case(3):
-        //     strcpy(itype, "DEV");
-        //     default:
-        //     strcpy(itype, "NONE");
-        // }
+        switch(in.type) {
+            case(1):
+            strcpy(itype, "DIR");
+            case(2):
+            strcpy(itype, "FILE");
+            case(3):
+            strcpy(itype, "DEV");
+            default:
+            strcpy(itype, "NONE");
+        }
         
         printf(1, "dirents[%d] = {inum: %d, pinum: %d, name: %s}\n", i/sizeof(struct dirent), de.inum, de.pinum, de.name);
         i += sizeof(struct dirent);
-        // printf(1, "inodes[%d] = {dev: %d, inum: %d, type: %s, nlink: %d, ref: %d, size: %d, valid: %d}\n", 
-        //        i, in.dev, in.inum, itype, in.nlink, in.ref, in.size, in.valid);
+        printf(1, "inodes[%d] = {dev: %d, inum: %d, type: %s, nlink: %d, ref: %d, size: %d, valid: %d}\n", 
+               i, in.dev, in.inum, itype, in.nlink, in.ref, in.size, in.valid);
     }
     exit();
 }
