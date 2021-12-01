@@ -689,7 +689,7 @@ walkinodetb(uint dev, int *inums)
   struct buf *bp;
   struct dinode *dip;
 
-  for(inum = 2; inum < sb.ninodes; inum++){
+  for(inum = 1; inum < sb.ninodes; inum++){
     bp = bread(dev, IBLOCK(inum, sb));
     dip = (struct dinode *)bp->data + inum%IPB;
     if (dip->type != 0 && dip->nlink > 0) //allocated inode
