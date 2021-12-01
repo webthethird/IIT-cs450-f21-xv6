@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
     while ((de = dirents[i]).inum != 0) {
     // for (int i = 0; i < 200 * sizeof(de); i += sizeof(de)) {
         // de = dirents[i];
-        // in = inodes[i];
+        getinode(de.inum, &in);
         // switch(in.type) {
         //     case(1):
         //     strcpy(itype, "DIR");

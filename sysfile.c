@@ -444,16 +444,31 @@ sys_pipe(void)
 }
 
 int
+sys_getinode(void)
+{
+  int inum;
+  struct inode *ip, *dest;
+
+  begin_op();
+
+  if(argint(0, &inum) < 0 || argptr(1, (char**)&dest, sizeof(ip)) < 0) {
+    end_op();
+    return -1;
+  }
+  getinode(inum, dest);
+
+  end_op();
+  return 0;
+}
+
+int
 sys_walkdir(void)
 {
   char *path;
-  // struct superblock sb;
   struct dirent *dirents;
   // struct inode *inodes;
 
   begin_op();
-  // readsb(ROOTDEV, &sb);
-  // cprintf("sb.ninodes = %d\n", sb.ninodes);
 
   if(argstr(0, &path) < 0 || argptr(1, (char**)&dirents, sizeof(dirents)) < 0){ //|| argptr(2, (char**)&inodes, sizeof(inodes)) < 0){
     end_op();

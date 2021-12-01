@@ -671,6 +671,17 @@ nameiparent(char *path, char *name)
 }
 
 int
+getinode(uint inum, struct inode* dest)
+{
+  struct inode *ip;
+  ip = iget(1, inum);
+  ilock(ip);
+  memmove(dest, ip, sizeof(struct inode));
+  iunlock(ip);
+  return 0;
+}
+
+int
 walkinodetb(uint dev, struct inode **inums)
 {
   int inum;
