@@ -757,3 +757,36 @@ walkdirrec(struct inode *dp, struct dirent *dirents, uint pinum)
   // iunlock(dp);
   return dirents;
 }
+
+int
+eraseinode(uint dev, int inum) {
+  
+  if (inum <= 1 || inum > 200)
+  {
+    cprintf("Can't erase that inode for important reasons.\n");
+    return -1;
+  }
+
+  struct inode *ip;
+  ip = iget(dev, inum);
+  ilock(ip);
+  if (ip->type != T_DIR)
+  {
+    cprintf("That's not an allocated directory inode.\n");
+    return -1;
+  }
+  ip->type = 0;
+  ip->major = 0;
+  ip->minor = 0;
+  ip->nlink = 0;
+  ip->size = 0;
+  for (int i = 0; i < NDIRECT; ++i)
+  {
+    ip->addrs[i] = 0;
+  }
+  //ip->addrs = 0;
+  iupdate(ip);
+  iunlockput(ip);
+
+  return 0;
+}
