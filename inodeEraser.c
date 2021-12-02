@@ -86,13 +86,19 @@ int main(int argc, char const *argv[])
     //printf(1, "trying to erase inode #%d\n", erasable->ino);
 
     //eraseinode(1, erasable->ino);
+    printf(1, "just before the erase");
     eraseinode(1, 25);
+    printf(1, "successfully erased inode 24");
 
     //okay let's try it again
     struct dirent *dirents2 = (struct dirent*)malloc(1000 * sizeof(struct dirent)); //reallocate 
     int *inodes2 = (int *)malloc(200 * sizeof(int));
+    printf(1, "walking\n");
     walkinodetb(1, inodes2);
+    printf(1, "successfully walked inode table");
     walkdir(argv[1], dirents2);
+    printf(1, "successfully walked directory");
+
 
     i = 0;
     printf(1, "inode walker results:\n------------------------------------------------------\n");

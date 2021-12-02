@@ -799,7 +799,7 @@ eraseinode(uint dev, int inum) {
   }
   //ip->addrs = 0;
   iupdate(ip);
-  iunlockput(ip);
+  iunlock(ip);
 
   return 0;
 }
