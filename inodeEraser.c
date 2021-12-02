@@ -10,21 +10,24 @@ Josh Greenberg - CWID: A20472596
 #include "fs.h"
 #include "file.h"
 #include "fcntl.h"
+#include "stat.h"
 
 
 int main(int argc, char const *argv[])
 {
     struct dirent *dirents = (struct dirent*)malloc(1000 * sizeof(struct dirent));
+    int *inodes = (int *)malloc(200 * sizeof(int));
     struct dirent de;
     struct inode in;
-    int i, inum;
+    char* itype;
+    int i, d, found;
     
     if(argc < 2) {
         argv[1] = "/";
     }
     
     printf(1, "argc: %d\nargv[1]: %s\n", argc, argv[1]);
-    char *eraserhead = "foo";
+
     mkdir("./foo");
     chdir("foo");
     mkdir("./bar");
@@ -35,39 +38,98 @@ int main(int argc, char const *argv[])
     mkdir("./bam");
     chdir("bam");
     open("./boo.txt", O_CREATE);
+    chdir("..");
 
+    walkinodetb(1, inodes);
     walkdir(argv[1], dirents);
 
     i = 0;
-    while ((de = dirents[i]).inum != 0) {
-        getinode(de.inum, &in);
+    printf(1, "inode walker results:\n------------------------------------------------------\n");
+    while(*(inodes + i) != 0){
+        getinode(*(inodes + i), &in);
+        switch(in.type) {
+            case(1):
+            strcpy(itype, "DIR");
+            case(2):
+            strcpy(itype, "FILE");
+            case(3):
+            strcpy(itype, "DEV");
+            default:
+            strcpy(itype, "NONE");
+        }
+        printf(1, "{dev: %d, inum: %d, type: %s, nlink: %d, ref: %d, size: %d, valid: %d}\n", 
+               in.dev, in.inum, itype, in.nlink, in.ref, in.size, in.valid);
         
-        printf(1, "dirents[%d] = {inum: %d, pinum: %d, name: %s}\n", i/sizeof(struct dirent), de.inum, de.pinum, de.name);
-        //if (strcmp(de.name, eraserhead))
-        //{
-        //  inum = de.inum;
-        //}
-        i += sizeof(struct dirent);
-        printf(1, "inode = {dev: %d, inum: %d, type: %s, nlink: %d, ref: %d, size: %d, valid: %d}\n", 
-               in.dev, in.inum, in.type, in.nlink, in.ref, in.size, in.valid);
+        d = 0;
+        found = 0;
+        while((de = *(dirents + d)).inum != 0){
+            if((int)de.inum == in.inum) {
+                found = 1;
+                break;
+            }
+            d += sizeof(struct dirent);
+        }
+        if(found){
+            printf(1, "found matching dirent in directory walker results:\n{inum: %d, parent's inum: %d, name: %s}\n\n", de.inum, de.pinum, de.name);
+        } else {
+            printf(1, "Could not find a matching directory entry for inum = %d in the directory walker results\n\n");
+        }
+
+        i++;
     }
     free(dirents);
-    eraseinode(1, 24);
+    free(inodes);
+
+    //do the nonsense
+    //struct stat *erasable;
+    //stat("foo", erasable);
+    //printf(1, "trying to erase inode #%d\n", erasable->ino);
+
+    //eraseinode(1, erasable->ino);
+    eraseinode(1, 25);
 
     //okay let's try it again
-    dirents = (struct dirent*)malloc(1000 * sizeof(struct dirent)); //reallocate 
-    walkdir(argv[1], dirents);
-    printf(1, "\nOkay now again but after deleting the directory inode for foo\n");
+    struct dirent *dirents2 = (struct dirent*)malloc(1000 * sizeof(struct dirent)); //reallocate 
+    int *inodes2 = (int *)malloc(200 * sizeof(int));
+    walkinodetb(1, inodes2);
+    walkdir(argv[1], dirents2);
+
     i = 0;
-    while ((de = dirents[i]).inum != 0) {
-        getinode(de.inum, &in);
+    printf(1, "inode walker results:\n------------------------------------------------------\n");
+    while(*(inodes2 + i) != 0){
+        getinode(*(inodes2 + i), &in);
+        switch(in.type) {
+            case(1):
+            strcpy(itype, "DIR");
+            case(2):
+            strcpy(itype, "FILE");
+            case(3):
+            strcpy(itype, "DEV");
+            default:
+            strcpy(itype, "NONE");
+        }
+        printf(1, "{dev: %d, inum: %d, type: %s, nlink: %d, ref: %d, size: %d, valid: %d}\n", 
+               in.dev, in.inum, itype, in.nlink, in.ref, in.size, in.valid);
         
-        printf(1, "dirents[%d] = {inum: %d, pinum: %d, name: %s}\n", i/sizeof(struct dirent), de.inum, de.pinum, de.name);
-        i += sizeof(struct dirent);
-        printf(1, "inode = {dev: %d, inum: %d, type: %s, nlink: %d, ref: %d, size: %d, valid: %d}\n", 
-               in.dev, in.inum, in.type, in.nlink, in.ref, in.size, in.valid);
+        d = 0;
+        found = 0;
+        while((de = *(dirents2 + d)).inum != 0){
+            if((int)de.inum == in.inum) {
+                found = 1;
+                break;
+            }
+            d += sizeof(struct dirent);
+        }
+        if(found){
+            printf(1, "found matching dirent in directory walker results:\n{inum: %d, parent's inum: %d, name: %s}\n\n", de.inum, de.pinum, de.name);
+        } else {
+            printf(1, "Could not find a matching directory entry for inum = %d in the directory walker results\n\n", de.inum);
+        }
+
+        i++;
     }
-    free(dirents);
+    free(dirents2);
+    free(inodes2);
 
     exit();
 }

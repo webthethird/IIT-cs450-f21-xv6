@@ -677,7 +677,7 @@ getinode(uint inum, struct inode* dest)
   ip = iget(1, inum);
   ilock(ip);
   memmove(dest, ip, sizeof(struct inode));
-  iunlock(ip);
+  iunlockput(ip);
   return 0;
 }
 
@@ -706,7 +706,6 @@ int
 walkdir(char *path, struct dirent *dirents)
 {
   struct inode *ip;
-  uint i = 0;
 
   ip = namei(path);
   ilock(ip);
@@ -716,7 +715,7 @@ walkdir(char *path, struct dirent *dirents)
   }
   // iunlock(ip);
   walkdirrec(ip, dirents, ip->inum);
-  iunlock(ip);
+  iunlockput(ip);
   return 0;
 }
 
@@ -725,7 +724,6 @@ walkdirrec(struct inode *dp, struct dirent *dirents, uint pinum)
 {
   uint off;
   struct dirent de;
-  struct inode in;
   struct inode *ip;
 
   // ilock(dp);
@@ -748,9 +746,9 @@ walkdirrec(struct inode *dp, struct dirent *dirents, uint pinum)
     if(ip->type == T_DIR){
       // ilock(ip);
       dirents = walkdirrec(ip, dirents, dp->inum);
-      iunlock(ip);
+      iunlockput(ip);
     } else {
-      iunlock(ip);
+      iunlockput(ip);
       continue;
     }
   }

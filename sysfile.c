@@ -506,9 +506,9 @@ sys_fixdirnode(void)
     end_op();
     return -1;
   }
-
+  int ret = fixdirnode(dev, inum);
   end_op();
-  return 0;
+  return ret;
 }
 
 int

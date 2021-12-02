@@ -186,6 +186,7 @@ UPROGS=\
 	_inodeWalker\
 	_compareWalkers\
 	_inodeEraser\
+	_inodeRecover\
 
 fs.img: mkfs README.md $(UPROGS)
 	./mkfs fs.img README.md $(UPROGS)
