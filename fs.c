@@ -757,3 +757,18 @@ walkdirrec(struct inode *dp, struct dirent *dirents, uint pinum)
   // iunlock(dp);
   return dirents;
 }
+
+int
+fixdirnode(uint dev, uint inum)
+{
+  struct inode *ip;
+  struct dirent *dirents;
+
+  if((ip = iget(dev, inum))->inum == 0){
+    return -1;
+  }
+  ilock(ip);
+
+  iunlock(ip);
+  return 0;
+}

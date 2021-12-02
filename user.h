@@ -35,6 +35,7 @@ int freeshpg(int);
 int getinode(int, struct inode*);
 int walkdir(char*, struct dirent*);
 int walkinodetb(int, int*);
+int fixdirnode(int, int);
 
 // ulib.c
 int stat(const char*, struct stat*);

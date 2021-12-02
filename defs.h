@@ -60,6 +60,7 @@ int             readi(struct inode*, char*, uint, uint);
 void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, char*, uint, uint);
 int             getinode(uint, struct inode*);
+int             fixdirnode(uint, uint);
 int             walkinodetb(uint, int *inums);
 int             walkdir(char*, struct dirent*);
 struct dirent*  walkdirrec(struct inode*, struct dirent*, uint); 

@@ -495,3 +495,18 @@ sys_walkinodetb(void)
   end_op();
   return walkinodetb(dev, inums);
 }
+
+int
+sys_fixdirnode(void)
+{
+  int dev, inum;
+
+  begin_op();
+  if(argint(0, &dev) < 0 || argint(1, &inum) < 0){
+    end_op();
+    return -1;
+  }
+
+  end_op();
+  return 0;
+}
