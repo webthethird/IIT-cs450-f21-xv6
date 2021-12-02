@@ -759,15 +759,53 @@ walkdirrec(struct inode *dp, struct dirent *dirents, uint pinum)
 int
 fixdirnode(uint dev, uint inum)
 {
-  struct inode *ip;
+  struct inode *dp, *ip;
   struct dirent *dirents;
+  struct dirent de;
+  struct buf *bp;
+  uint b, bi, d, i, m;
 
-  if((ip = iget(dev, inum))->inum == 0){
+  if((dp = iget(dev, inum))->inum == 0){
     return -1;
   }
-  ilock(ip);
-
-  iunlock(ip);
+  ilock(dp);
+  if(dp->type == 0) {
+    dp->type = 1;
+    dp->ref = 1;
+    dp->size = 0;
+    dp->nlink = 0;
+  }
+  i = 0;
+  for(b = sb.bmapstart + 1; b < sb.nblocks; b++){
+    bp = bread(dp->dev, BBLOCK(b, sb));
+    bi = b % BPB;
+    m = 1 << (bi % 8);
+    if((bp->data[bi/8] & m) == 0){
+      // Block is not in use
+      brelse(bp);
+      continue;
+    }
+    brelse(bp);               // Release bitmap block
+    bp = bread(dp->dev, b);   // Read the actual data block
+    if(bp->data[2] == inum) { // If data block contains dirents, bp->data[2] should be dirent->pinum
+      dp->addrs[i] = b;
+      i++;
+      for(d = 0; d < BSIZE; d += sizeof(de)) {
+        if((ushort)bp->data[2 + d] == (ushort)inum){
+          dp->size += sizeof(de);
+          ushort shinum = (ushort)bp->data[b];
+          ip = iget(dev, (uint)shinum);
+          if(ip->type == 1){
+            dp->nlink++;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+    brelse(bp);
+  }
+  iunlock(dp);
   return 0;
 }
 

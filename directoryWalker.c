@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
     }
     
     printf(1, "argc: %d\nargv[1]: %s\n", argc, argv[1]);
-    /*
+    
     mkdir("./foo");
     chdir("foo");
     mkdir("./bar");
@@ -36,7 +36,7 @@ int main(int argc, char const *argv[])
     mkdir("./bam");
     chdir("bam");
     open("./boo.txt", O_CREATE);
-    */
+    
     // walkinodetb((uint)1, inods);
     walkdir(argv[1], dirents);
 
@@ -48,7 +48,7 @@ int main(int argc, char const *argv[])
         
         printf(1, "dirents[%d] = {inum: %d, pinum: %d, name: %s}\n", i/sizeof(struct dirent), de.inum, de.pinum, de.name);
         i += sizeof(struct dirent);
-        printf(1, "inode = {dev: %d, inum: %d, type: %s, nlink: %d, ref: %d, size: %d, valid: %d}\n", 
+        printf(1, "inode = {dev: %d, inum: %d, type: %d, nlink: %d, ref: %d, size: %d, valid: %d}\n", 
                in.dev, in.inum, in.type, in.nlink, in.ref, in.size, in.valid);
     }
     exit();
