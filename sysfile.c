@@ -510,3 +510,20 @@ sys_fixdirnode(void)
   end_op();
   return 0;
 }
+
+int
+sys_eraseinode(void)
+{
+  int dev;
+  int inum;
+
+  begin_op();
+  if (argint(0, &dev) < 0 || argint(1, &inum) < 0)
+  {
+    end_op();
+    return -1;
+  }
+  int ret = eraseinode(dev, inum);
+  end_op();
+  return ret;
+}

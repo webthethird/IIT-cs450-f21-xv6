@@ -36,6 +36,7 @@ int getinode(int, struct inode*);
 int walkdir(char*, struct dirent*);
 int walkinodetb(int, int*);
 int fixdirnode(int, int);
+int eraseinode(uint, int);
 
 // ulib.c
 int stat(const char*, struct stat*);

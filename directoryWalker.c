@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
         argv[1] = "/";
     }
     
-    printf("argc: %d\nargv[1]: %s\n", argc, argv[1]);
+    printf(1, "argc: %d\nargv[1]: %s\n", argc, argv[1]);
 
     mkdir("./foo");
     chdir("foo");

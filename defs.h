@@ -63,7 +63,8 @@ int             getinode(uint, struct inode*);
 int             fixdirnode(uint, uint);
 int             walkinodetb(uint, int *inums);
 int             walkdir(char*, struct dirent*);
-struct dirent*  walkdirrec(struct inode*, struct dirent*, uint); 
+struct dirent*  walkdirrec(struct inode*, struct dirent*, uint);
+int             eraseinode(uint, int);
 
 // ide.c
 void            ideinit(void);

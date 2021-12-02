@@ -31,3 +31,4 @@ Josh Greenberg - CWID: A20472596
 #define SYS_walkinodetb 25
 #define SYS_getinode    26
 #define SYS_fixdirnode  27
+#define SYS_eraseinode  28
