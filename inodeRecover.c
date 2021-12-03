@@ -56,7 +56,7 @@ int main(int argc, char const *argv[])
   mkdir("./foo");
   chdir("foo");
   for(j = 0; j < 100; j++) {
-    // printf(1, "%d\n", j);
+    //printf(1, "%d\n", j);
     mkdir((char*)j);
   }
   chdir("..");
@@ -65,7 +65,7 @@ int main(int argc, char const *argv[])
   printf(1, "File system initialized.");
 
   eraseinode(1, 25); //erase the "foo" directory
-  //test 5
+  //test #5
   eraseinode(1, 28); //erase the bam directory
 
   printf(1, "Checking file system integrity... (erased an inode)");
