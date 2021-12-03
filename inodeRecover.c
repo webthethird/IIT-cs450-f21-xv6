@@ -55,8 +55,8 @@ int main(int argc, char const *argv[])
   mkdir("./foo");
   chdir("foo");
   for(j = 0; j < 100; j++) {
-    // printf(1, "%d\n", j);
-    open((char*)j, O_CREATE);
+    printf(1, "%d\n", j);
+    mkdir((char*)j);
   }
   chdir("..");
 
