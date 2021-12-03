@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
   int i, j, d, found;
 
   //test #1
-  /*
+  
   mkdir("./foo");
   chdir("foo");
   mkdir("./bar");
@@ -34,7 +34,7 @@ int main(int argc, char const *argv[])
   chdir("bam");
   open("./boo.txt", O_CREATE);
   chdir("..");
-  */
+  
 
   //test #2
   /*
@@ -52,19 +52,21 @@ int main(int argc, char const *argv[])
   */
 
   //test #4
+  /*
   mkdir("./foo");
   chdir("foo");
   for(j = 0; j < 100; j++) {
     // printf(1, "%d\n", j);
-    open((char*)j, O_CREATE);
+    mkdir((char*)j);
   }
   chdir("..");
+  */
 
   printf(1, "File system initialized.");
 
   eraseinode(1, 25); //erase the "foo" directory
   //test 5
-  //eraseinode(1, 28); //erase the bam directory
+  eraseinode(1, 28); //erase the bam directory
 
   printf(1, "Checking file system integrity... (erased an inode)");
 
