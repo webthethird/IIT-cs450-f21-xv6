@@ -14,14 +14,15 @@ Josh Greenberg - CWID: A20472596
 
 int main(int argc, char const *argv[])
 {
-  struct dirent *dirents = (struct dirent*)malloc(1000 * sizeof(struct dirent));
+  struct dirent *dirents = (struct dirent*)malloc(5000 * sizeof(struct dirent));
   int *inodes = (int *)malloc(200 * sizeof(int));
   struct dirent de;
   int in;
   char* itype;
-  int i, d, found;
+  int i, j, d, found;
 
   //test #1
+  /*
   mkdir("./foo");
   chdir("foo");
   mkdir("./bar");
@@ -33,6 +34,7 @@ int main(int argc, char const *argv[])
   chdir("bam");
   open("./boo.txt", O_CREATE);
   chdir("..");
+  */
 
   //test #2
   /*
@@ -48,6 +50,15 @@ int main(int argc, char const *argv[])
   mkdir("./foo");
   chdir("foo");
   */
+
+  //test #4
+  mkdir("./foo");
+  chdir("foo");
+  for(j = 0; j < 100; j++) {
+    // printf(1, "%d\n", j);
+    open((char*)j, O_CREATE);
+  }
+  chdir("..");
 
   printf(1, "File system initialized.");
 

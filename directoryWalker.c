@@ -14,11 +14,11 @@ Josh Greenberg - CWID: A20472596
 
 int main(int argc, char const *argv[])
 {
-    struct dirent *dirents = (struct dirent*)malloc(1000 * sizeof(struct dirent));
+    struct dirent *dirents = (struct dirent*)malloc(5000 * sizeof(struct dirent));
     // struct inode *inodes = (struct inode*)malloc(200 * sizeof(struct inode));
     struct dirent de;
     struct inode in;
-    int i;
+    int i, j;
     
     if(argc < 2) {
         argv[1] = "/";
@@ -26,18 +26,26 @@ int main(int argc, char const *argv[])
     
     printf(1, "argc: %d\nargv[1]: %s\n", argc, argv[1]);
     
+    // mkdir("./foo");
+    // chdir("foo");
+    // mkdir("./bar");
+    // chdir("bar");
+    // open("./bar.txt", O_CREATE);
+    // chdir("..");
+    // chdir("..");
+    // mkdir("./bam");
+    // chdir("bam");
+    // open("./boo.txt", O_CREATE);
+
+    //test #4
     mkdir("./foo");
     chdir("foo");
-    mkdir("./bar");
-    chdir("bar");
-    open("./bar.txt", O_CREATE);
+    for(j = 0; j < 100; j++) {
+        printf(1, "%d\n", j);
+        mkdir((char*)j);
+    }
     chdir("..");
-    chdir("..");
-    mkdir("./bam");
-    chdir("bam");
-    open("./boo.txt", O_CREATE);
-    
-    // walkinodetb((uint)1, inods);
+        
     walkdir(argv[1], dirents);
 
     i = 0;
