@@ -51,7 +51,7 @@ int main(int argc, char const *argv[])
 
   printf(1, "File system initialized.");
 
-  eraseinode(1, 24); //erase the "foo" directory
+  eraseinode(1, 25); //erase the "foo" directory
 
   printf(1, "Checking file system integrity... (erased an inode)");
 
