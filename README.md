@@ -1,6 +1,10 @@
-NOTE: this is a private fork of mit-pdos/xv6-public, for use in paired
+NOTE: this is a (formerly) private fork of mit-pdos/xv6-public, for use in paired
 programming assignments for CS450: Operating Systems in Fall 2021 at the
-Illinois Institute of Technology in Chicago.
+Illinois Institute of Technology in Chicago. It is being made public for the sake 
+of making our Github activity visible to potential employers. That being said,
+__STUDENTS TAKING A SIMILAR COURSE ARE NOT PERMITTED TO FORK THIS REPO OR COPY IT 
+IN ANY WAY, AS THAT CONSTITUTES PLAGIARISM AND IS FORBIDDEN BY ACADEMIC HONESTY 
+POLICIES AT ANY INSTITUTION, NOT TO MENTION FEDERAL LAW!__
 
 ## Assignment 3: Shared Memory Pages
 ### How to Build and Execute
